@@ -5,16 +5,25 @@ from numbers import Number
 import numpy as np
 
 #TODO: add PIL.Image support
+from types import ModuleType
 
-try:
-  assert hasattr(gimp, 'Drawable')
-except:
+if 'gimp' in globals() and isinstance(gimp, ModuleType) and 'pdb' in gimp:
+  if 'pdb' not in globals() or gimp.pdb is not pdb:
+    pdb = gimp.pdb
+else:
   gimp = pdb = None
+  print "No gimp support.  Falling back on other libraries."
+  print "This means there is also no pdb so no plugins either, only"
+  print "drawable import and export are supported."
+
 
 try:
   import PIL
 except:
   PIL = None
+  print "No PIL support."
+  if gimp is None:
+    raise NotSupportedError("With no gimp and no PIL there is not anything we can do.")
 
 
 def sequence_to_ndarray(seq, dtype
